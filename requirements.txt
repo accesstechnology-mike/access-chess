@@ -1,0 +1,5 @@
+# This Next.js application uses Node.js dependencies
+# Install with: npm install
+# See package.json for dependencies
+
+# No Python dependencies needed for this Next.js version 
