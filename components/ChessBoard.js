@@ -3,28 +3,28 @@ import { useEffect, useRef } from "react";
 export default function ChessBoard({ board, gameStatus }) {
   const boardRef = useRef(null);
 
-  const getPieceName = (pieceSymbol) => {
+  const getPieceName = (piece) => {
     const pieceNames = {
-      "♟": "pawn",
-      "♜": "rook", 
-      "♞": "knight",
-      "♝": "bishop",
-      "♛": "queen",
-      "♚": "king",
+      p: "pawn",
+      r: "rook",
+      n: "knight",
+      b: "bishop",
+      q: "queen",
+      k: "king",
     };
-    return pieceNames[pieceSymbol] || "piece";
+    return pieceNames[piece.type] || "piece";
+  };
+
+  const getPieceImage = (piece) => {
+    if (!piece) return null;
+    const pieceName = `${piece.color}${piece.type.toUpperCase()}`;
+    return `/pieces/${pieceName}.svg`;
   };
 
   const getSquareClass = (square, rankIndex, fileIndex) => {
     const baseClass = "chess-square";
     const lightSquare = square.isLight ? "light" : "dark";
     return `${baseClass} ${lightSquare}`;
-  };
-
-  const getPieceClass = (square) => {
-    if (!square.piece) return "";
-    const colorClass = square.color === "w" ? "white-piece" : "black-piece";
-    return `piece-symbol ${colorClass}`;
   };
 
   const getSquareAriaLabel = (square, rankIndex, fileIndex) => {
@@ -90,20 +90,15 @@ export default function ChessBoard({ board, gameStatus }) {
                   data-square={square.square}
                 >
                   {square.piece && (
-                    <>
-                      <span className={getPieceClass(square)} aria-hidden="true">
-                        {square.piece}
-                      </span>
-                      <span className="square-label" aria-hidden="true">
-                        {getSquareLabel(rankIndex, fileIndex)}
-                      </span>
-                    </>
+                    <img
+                      src={getPieceImage(square.piece)}
+                      alt=""
+                      className="piece-symbol"
+                    />
                   )}
-                  {!square.piece && (
-                    <span className="square-label" aria-hidden="true">
-                      {getSquareLabel(rankIndex, fileIndex)}
-                    </span>
-                  )}
+                  <span className="square-label" aria-hidden="true">
+                    {getSquareLabel(rankIndex, fileIndex)}
+                  </span>
                 </div>
               ))}
             </div>

@@ -227,6 +227,11 @@ body {
   background: var(--dark-gray);
 }
 
+.new-game-btn:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
 /* Chess Board Main */
 .board-main {
   display: flex;
@@ -401,38 +406,6 @@ body {
   font-size: 1.1rem;
 }
 
-/* Loading Overlay */
-.loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  z-index: 1000;
-  color: white;
-  font-size: 1.2rem;
-}
-
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  border-top: 4px solid white;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
 /* Responsive Design */
 @media (max-width: 1200px) {
   .game-layout {
@@ -570,19 +543,49 @@ body {
 /* High contrast mode */
 @media (prefers-contrast: high) {
   :root {
+    --primary-blue: #0000ff;
+    --success-green: #00ff00;
+    --warning-orange: #ffbf00;
+    --error-red: #ff0000;
     --white-square: #ffffff;
     --black-square: #000000;
-    --border-color: #000000;
+    --light-gray: #000000;
+    --medium-gray: #ffffff;
+    --dark-gray: #ffffff;
+    --text-color: #ffffff;
+    --border-color: #ffffff;
+    --focus-ring: 0 0 0 3px #0000ff;
   }
 
-  .white-piece {
+  body {
+    background-color: #000000;
+    color: #ffffff;
+  }
+
+  .start-screen h1, .sidebar-header h1 {
     color: #0000ff;
-    text-shadow: 2px 2px 0px #ffffff;
+  }
+
+  .game-sidebar,
+  .chess-board-container,
+  .moves-section,
+  .difficulty-btn {
+    background-color: #000000;
+    border: 2px solid #ffffff;
+  }
+
+  .difficulty-btn:hover {
+    background-color: #1a1a1a;
+  }
+  
+  .white-piece {
+    color: #ffffff;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
   }
 
   .black-piece {
-    color: #ff0000;
-    text-shadow: 2px 2px 0px #000000;
+    color: #000000;
+    text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
   }
 }
 
@@ -592,9 +595,5 @@ body {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-  }
-
-  .loading-spinner {
-    animation: none;
   }
 } 

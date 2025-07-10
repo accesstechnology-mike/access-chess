@@ -31,26 +31,37 @@ export default function Home() {
     setIsPlayerTurn(status.turn === "white" && !status.gameOver);
   };
 
-  // Get piece symbol for a move
-  const getMoveSymbol = (move) => {
+  const getSimplifiedNotation = (move) => {
     // Handle castling
     if (move === "O-O" || move === "O-O-O") {
-      return "♚"; // King symbol for castling
+      return { pieceType: "K", notation: move };
     }
-    
-    // Extract piece from move notation
-    const firstChar = move[0];
-    if (firstChar === firstChar.toUpperCase() && isNaN(firstChar)) {
-      const pieceSymbols = {
-        'K': '♚', // King
-        'Q': '♛', // Queen  
-        'R': '♜', // Rook
-        'B': '♝', // Bishop
-        'N': '♞', // Knight
-      };
-      return pieceSymbols[firstChar] || '♟'; // Default to pawn
+
+    // Clean away check, checkmate, and promotion details for simplicity
+    const cleanMove = move.replace(/[+#=].*/, "");
+
+    // Handle pawn moves (e.g., "e4", "dxe5")
+    if (cleanMove[0] === cleanMove[0].toLowerCase()) {
+      return { pieceType: "P", notation: cleanMove.slice(-2) };
     }
-    return '♟'; // Pawn moves don't have a piece letter prefix
+
+    // Handle piece moves (e.g., "Nf3", "Bxf3", "Rad1")
+    const pieceType = cleanMove[0];
+    const notation = cleanMove.substring(1).replace("x", "");
+    return { pieceType, notation };
+  };
+
+  const getPieceImageSrc = (pieceType) => {
+    const pieceMap = {
+      K: "wK",
+      Q: "wQ",
+      R: "wR",
+      B: "wB",
+      N: "wN",
+      P: "wP",
+    };
+    const imageName = pieceMap[pieceType] || "wP"; // Default to pawn
+    return `/pieces/${imageName}.svg`;
   };
 
   const handleMoveClick = async (move) => {
@@ -106,19 +117,28 @@ export default function Home() {
     setDifficulty(null);
   };
 
+  const handleUndoClick = () => {
+    if (!game || !isPlayerTurn) return;
+
+    const result = game.undoMove();
+    if (result.success) {
+      updateGameState(game);
+    }
+  };
+
   // Difficulty selection screen
   if (!gameStarted) {
     return (
       <>
         <Head>
-          <title>Simple Chess Game</title>
-          <meta name="description" content="Simple, accessible chess game" />
+          <title>access: chess</title>
+          <meta name="description" content="Accessible chess game" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
         </Head>
 
         <div className="start-screen">
           <header>
-            <h1>♟️ Chess Game</h1>
+            <h1>♟️ access: chess</h1>
             <p>Choose your difficulty level</p>
           </header>
 
@@ -187,7 +207,7 @@ export default function Home() {
                 </div>
               ) : (
                 <div className="game-active">
-                  {loading ? "🤔 Thinking..." : (gameState.status.inCheck ? "⚠️ Check!" : "♟️ Playing")}
+                  {loading ? "🤔 Thinking..." : (gameState.status.inCheck ? "⚠️ Check!" : "")}
                 </div>
               )}
             </div>
@@ -196,6 +216,13 @@ export default function Home() {
             </div>
             <button onClick={handleNewGame} className="new-game-btn">
               New Game
+            </button>
+            <button
+              onClick={handleUndoClick}
+              className="new-game-btn"
+              disabled={!isPlayerTurn || (gameState && gameState.status.turn !== 'white') || !game || game.moveHistory.length < 2}
+            >
+              Undo Move
             </button>
           </div>
         </aside>
@@ -213,18 +240,36 @@ export default function Home() {
           <h2>Available Moves</h2>
           {isPlayerTurn && !gameState.status.gameOver ? (
             <div className="moves-grid">
-              {gameState.legalMoves.map((move, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleMoveClick(move)}
-                  className="move-btn"
-                  disabled={loading}
-                  aria-label={`Make move ${move}`}
-                >
-                  <span className="move-piece">{getMoveSymbol(move)}</span>
-                  <span className="move-notation">{move}</span>
-                </button>
-              ))}
+              {gameState.legalMoves.map((move, index) => {
+                const { pieceType, notation } = getSimplifiedNotation(move);
+                const pieceImageSrc = getPieceImageSrc(pieceType);
+                const altText =
+                  {
+                    K: "King",
+                    Q: "Queen",
+                    R: "Rook",
+                    B: "Bishop",
+                    N: "Knight",
+                    P: "Pawn",
+                  }[pieceType] || "Piece";
+
+                return (
+                  <button
+                    key={index}
+                    onClick={() => handleMoveClick(move)}
+                    className="move-btn"
+                    disabled={loading}
+                    aria-label={`Make move ${move}`}
+                  >
+                    <img
+                      src={pieceImageSrc}
+                      alt={altText}
+                      className="move-piece"
+                    />
+                    <span className="move-notation">{notation}</span>
+                  </button>
+                );
+              })}
             </div>
           ) : (
             <div className="no-moves">
@@ -232,13 +277,6 @@ export default function Home() {
             </div>
           )}
         </section>
-
-        {loading && (
-          <div className="loading-overlay" role="status" aria-live="polite">
-            <div className="loading-spinner"></div>
-            <p>Computer is thinking...</p>
-          </div>
-        )}
       </div>
     </>
   );
