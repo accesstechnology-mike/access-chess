@@ -57,15 +57,14 @@ export default function GamePage() {
 
     description = pieceName;
 
+    const cleanMove = move.replace(/[+#=].*/, "");
+
     if (move.includes("x")) {
-      description += ` captures on ${move.slice(-2)}`;
+      description += ` captures on ${cleanMove.slice(-2)}`;
     } else {
-      const targetSquare = move.replace(/[KQRBN]/, "").slice(-2);
+      const targetSquare = cleanMove.replace(/[KQRBN]/, "").slice(-2);
       description += ` to ${targetSquare}`;
     }
-
-    if (move.includes("+")) description += ", check";
-    if (move.includes("#")) description += ", checkmate";
 
     return description;
   };
@@ -157,11 +156,11 @@ export default function GamePage() {
         <section className="moves-container">
           <h2>
             {gameState.status.gameOver
-              ? "Game Over"
+              ? ""
               : isPlayerTurn
               ? ""
               : "Computer's Turn"}
-            {gameState.status.inCheck && " (Check!)"}
+            {gameState.status.inCheck && !gameState.status.gameOver && " (Check!)"}
           </h2>
           <div className="moves-grid">
             {isPlayerTurn && !gameState.status.gameOver ? (
