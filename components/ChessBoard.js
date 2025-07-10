@@ -1,52 +1,12 @@
 import { useEffect, useRef } from "react";
 
-export default function ChessBoard({
-  board,
-  gameStatus,
-  onBoardDescriptionUpdate,
-}) {
+export default function ChessBoard({ board, gameStatus }) {
   const boardRef = useRef(null);
-
-  // Update board description for screen readers
-  useEffect(() => {
-    if (board && onBoardDescriptionUpdate) {
-      const description = generateBoardDescription(board);
-      onBoardDescriptionUpdate(description);
-    }
-  }, [board, onBoardDescriptionUpdate]);
-
-  const generateBoardDescription = (boardArray) => {
-    let description = "Chess board position:\n";
-
-    boardArray.forEach((row, rankIndex) => {
-      const rank = 8 - rankIndex;
-      description += `Rank ${rank}: `;
-
-      const pieces = [];
-      row.forEach((square, fileIndex) => {
-        const file = String.fromCharCode(97 + fileIndex);
-        if (square.piece) {
-          const colorName = square.color === "w" ? "white" : "black";
-          const pieceName = getPieceName(square.piece);
-          pieces.push(`${colorName} ${pieceName} on ${file}${rank}`);
-        }
-      });
-
-      if (pieces.length > 0) {
-        description += pieces.join(", ");
-      } else {
-        description += "empty";
-      }
-      description += "\n";
-    });
-
-    return description;
-  };
 
   const getPieceName = (pieceSymbol) => {
     const pieceNames = {
       "♟": "pawn",
-      "♜": "rook",
+      "♜": "rook", 
       "♞": "knight",
       "♝": "bishop",
       "♛": "queen",
@@ -61,23 +21,24 @@ export default function ChessBoard({
     return `${baseClass} ${lightSquare}`;
   };
 
-  const getPieceClass = (square) => {
-    if (!square.piece) return "";
-    const colorClass = square.color === "w" ? "white" : "black";
-    return `chess-piece ${colorClass}`;
-  };
-
   const getSquareAriaLabel = (square, rankIndex, fileIndex) => {
     const file = String.fromCharCode(97 + fileIndex);
     const rank = 8 - rankIndex;
+    const location = `${file}${rank}`;
 
     if (square.piece) {
-      const colorName = square.color === "w" ? "white" : "black";
+      const colorName = square.color === "w" ? "White" : "Black";
       const pieceName = getPieceName(square.piece);
-      return `${colorName} ${pieceName} on ${file}${rank}`;
+      return `${colorName} ${pieceName} on ${location}`;
     } else {
-      return `Empty square ${file}${rank}`;
+      return `Empty square ${location}`;
     }
+  };
+
+  const getSquareLabel = (rankIndex, fileIndex) => {
+    const file = String.fromCharCode(97 + fileIndex);
+    const rank = 8 - rankIndex;
+    return `${file}${rank}`;
   };
 
   if (!board) {
@@ -95,13 +56,12 @@ export default function ChessBoard({
         className="chess-board"
         role="table"
         aria-label="Chess board"
-        tabIndex={0}
       >
         {/* File labels (a-h) */}
-        <div className="file-labels" role="row">
-          <div className="corner-label"></div>
+        <div className="file-labels">
+          <div className="corner-label" aria-hidden="true"></div>
           {Array.from({ length: 8 }, (_, i) => (
-            <div key={i} className="file-label" role="columnheader">
+            <div key={i} className="file-label" aria-hidden="true">
               {String.fromCharCode(97 + i)}
             </div>
           ))}
@@ -111,21 +71,31 @@ export default function ChessBoard({
         {board.map((row, rankIndex) => {
           const rank = 8 - rankIndex;
           return (
-            <div key={rankIndex} className="board-row" role="row">
-              <div className="rank-label" role="rowheader">
+            <div key={rankIndex} className="board-row">
+              <div className="rank-label" aria-hidden="true">
                 {rank}
               </div>
               {row.map((square, fileIndex) => (
                 <div
                   key={fileIndex}
                   className={getSquareClass(square, rankIndex, fileIndex)}
-                  role="cell"
+                  role="gridcell"
                   aria-label={getSquareAriaLabel(square, rankIndex, fileIndex)}
                   data-square={square.square}
                 >
                   {square.piece && (
-                    <span className={getPieceClass(square)} aria-hidden="true">
-                      {square.piece}
+                    <>
+                      <span className="piece-symbol" aria-hidden="true">
+                        {square.piece}
+                      </span>
+                      <span className="square-label" aria-hidden="true">
+                        {getSquareLabel(rankIndex, fileIndex)}
+                      </span>
+                    </>
+                  )}
+                  {!square.piece && (
+                    <span className="square-label" aria-hidden="true">
+                      {getSquareLabel(rankIndex, fileIndex)}
                     </span>
                   )}
                 </div>
@@ -135,17 +105,13 @@ export default function ChessBoard({
         })}
       </div>
 
-      {/* Game status announcement */}
-      <div
-        className="game-status-announcement"
-        role="status"
-        aria-live="polite"
-        aria-atomic="true"
-      >
-        {gameStatus?.inCheck && <span>Check! </span>}
-        {gameStatus?.isCheckmate && <span>Checkmate! </span>}
-        {gameStatus?.isStalemate && <span>Stalemate! </span>}
-        {gameStatus?.isDraw && <span>Draw! </span>}
+      {/* Game status for screen readers */}
+      <div className="sr-only" role="status" aria-live="polite">
+        {gameStatus?.inCheck && "Check! "}
+        {gameStatus?.isCheckmate && "Checkmate! "}
+        {gameStatus?.isStalemate && "Stalemate! "}
+        {gameStatus?.isDraw && "Draw! "}
+        Current turn: {gameStatus?.turn === "white" ? "White" : "Black"}
       </div>
     </div>
   );
