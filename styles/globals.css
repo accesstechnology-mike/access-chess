@@ -216,7 +216,7 @@ body {
 }
 
 .moves-container {
-  padding-top: 10px;
+  padding-top: 0px;
   flex-shrink: 0;
   height: 250px; /* Fix height to prevent layout shift */
 }
@@ -231,10 +231,12 @@ body {
 .moves-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 8px;
   justify-content: center;
   max-height: 200px; /* Adjust as needed */
   overflow-y: auto;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .move-btn {
@@ -354,6 +356,14 @@ body {
 
 .chess-square.dark {
   background: var(--black-square);
+}
+
+.chess-square.move-from {
+  box-shadow: inset 0 0 0 1000px rgba(247, 211, 132, 0.7);
+}
+
+.chess-square.move-to {
+  box-shadow: inset 0 0 0 1000px rgba(245, 185, 91, 0.9);
 }
 
 /* Fixed piece colors */

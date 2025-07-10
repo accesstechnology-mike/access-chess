@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-export default function ChessBoard({ board, gameStatus }) {
+export default function ChessBoard({ board, gameStatus, lastMove }) {
   const boardRef = useRef(null);
 
   const getPieceName = (piece) => {
@@ -24,7 +24,15 @@ export default function ChessBoard({ board, gameStatus }) {
   const getSquareClass = (square, rankIndex, fileIndex) => {
     const baseClass = "chess-square";
     const lightSquare = square.isLight ? "light" : "dark";
-    return `${baseClass} ${lightSquare}`;
+    let moveHighlightClass = "";
+    if (lastMove) {
+      if (square.square === lastMove.from) {
+        moveHighlightClass = "move-from";
+      } else if (square.square === lastMove.to) {
+        moveHighlightClass = "move-to";
+      }
+    }
+    return `${baseClass} ${lightSquare} ${moveHighlightClass}`;
   };
 
   const getSquareAriaLabel = (square, rankIndex, fileIndex) => {

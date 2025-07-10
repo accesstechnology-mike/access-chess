@@ -147,7 +147,11 @@ export default function GamePage() {
         </header>
         
         <main className="board-container">
-          <ChessBoard board={gameState.board} gameStatus={gameState.status} />
+          <ChessBoard
+            board={gameState.board}
+            gameStatus={gameState.status}
+            lastMove={gameState.status.lastMove}
+          />
         </main>
 
         <section className="moves-container">
@@ -164,12 +168,14 @@ export default function GamePage() {
               gameState.legalMoves.map((move, index) => {
                 const { pieceType, notation } = getSimplifiedNotation(move);
                 const isSuggested = move === suggestedMove;
+                const description = getFullMoveDescription(move);
+                const ariaLabel = isSuggested ? `*${description}*` : description;
                 return (
                   <button
                     key={index}
                     onClick={() => handleMoveClick(move)}
                     className={`move-btn ${isSuggested ? "suggested-move" : ""}`}
-                    aria-label={getFullMoveDescription(move)}
+                    aria-label={ariaLabel}
                   >
                     <img src={getPieceImageSrc(pieceType)} alt="" className="move-piece-img" />
                     <span className="move-notation">{notation}</span>
