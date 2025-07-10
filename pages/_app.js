@@ -1,5 +1,7 @@
 import "../styles/globals.css";
 import Head from "next/head";
+import { StagewiseToolbar } from "@stagewise/toolbar-next";
+import { ReactPlugin } from "@stagewise-plugins/react";
 
 export default function App({ Component, pageProps }) {
   return (
@@ -48,6 +50,11 @@ export default function App({ Component, pageProps }) {
         <meta name="format-detection" content="telephone=no" />
       </Head>
       <Component {...pageProps} />
+      <StagewiseToolbar 
+        config={{
+          plugins: [ReactPlugin]
+        }}
+      />
     </>
   );
 }
