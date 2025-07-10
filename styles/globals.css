@@ -133,6 +133,10 @@ body {
   border-color: var(--error-red);
 }
 
+.difficulty-btn.beginner:hover {
+  border-color: var(--success-green);
+}
+
 /* Loading Screen */
 .loading-screen {
   min-height: 100vh;
@@ -143,62 +147,55 @@ body {
   color: var(--medium-gray);
 }
 
-/* Horizontal Game Layout */
-.game-layout {
-  min-height: 100vh;
-  display: grid;
-  grid-template-columns: 200px 1fr 300px;
-  gap: 20px;
-  padding: 20px;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-/* Slim Sidebar */
-.game-sidebar {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  height: fit-content;
-  position: sticky;
-  top: 20px;
-}
-
-.sidebar-header {
+/* New Compact Game Layout */
+.compact-game-layout {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  text-align: center;
-}
-
-.sidebar-header h1 {
-  font-size: 1.5rem;
-  color: var(--primary-blue);
-  font-weight: 700;
-  margin: 0;
-}
-
-.game-status {
+  height: 100vh;
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 10px;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.9rem;
 }
 
-.game-active {
-  background: #e0f2fe;
-  color: #0277bd;
-}
-
-.game-over {
-  background: #ffebee;
-  color: #c62828;
-}
-
-.difficulty-info {
+.game-header {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  flex-shrink: 0;
+}
+
+.game-header h1 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+}
+
+.game-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.control-btn {
+  padding: 8px 12px;
+  background: var(--medium-gray);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.control-btn:hover:not(:disabled) {
+  background: var(--dark-gray);
+}
+
+.control-btn:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
 }
 
 .difficulty-badge {
@@ -211,46 +208,108 @@ body {
   font-size: 0.8rem;
 }
 
-.new-game-btn {
-  padding: 10px 16px;
-  background: var(--medium-gray);
-  color: white;
-  border: none;
+.board-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.moves-container {
+  padding-top: 10px;
+  flex-shrink: 0;
+  height: 250px; /* Fix height to prevent layout shift */
+}
+
+.moves-container h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.moves-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  max-height: 200px; /* Adjust as needed */
+  overflow-y: auto;
+}
+
+.move-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px;
+  background: var(--light-gray);
+  border: 2px solid var(--border-color);
   border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  color: var(--text-color);
+  width: 70px; /* Fixed width */
+  height: 60px; /* Fixed height */
+}
+
+.move-piece-img {
+  width: 28px;
+  height: 28px;
+}
+
+.move-notation {
   font-size: 0.9rem;
   font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s ease;
+  font-family: 'Courier New', monospace;
 }
 
-.new-game-btn:hover {
-  background: var(--dark-gray);
+.move-btn:hover:not(:disabled) {
+  background: var(--primary-blue);
+  color: white;
+  border-color: var(--primary-blue);
 }
 
-.new-game-btn:disabled {
-  background-color: #9ca3af;
+.move-btn.suggested-move {
+  border-color: var(--success-green);
+  box-shadow: 0 0 8px rgba(22, 163, 74, 0.5);
+  background-color: #f0fff4;
+}
+
+.move-btn:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
-/* Chess Board Main */
-.board-main {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 20px 0;
+.no-moves-msg {
+  text-align: center;
+  padding: 20px;
+  color: var(--medium-gray);
+  font-style: italic;
+  font-size: 1rem;
+  width: 100%;
 }
 
+.piece-symbol {
+  width: 85%;
+  height: 85%;
+  object-fit: contain;
+}
+
+/* Chess Board */
 .chess-board-container {
   background: white;
-  padding: 20px;
+  padding: 10px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .chess-board {
   display: grid;
-  grid-template-columns: 30px repeat(8, 50px);
-  grid-template-rows: repeat(9, 50px);
+  grid-template-columns: 30px repeat(8, 60px);
+  grid-template-rows: 30px repeat(8, 60px);
   gap: 1px;
   border: 3px solid var(--dark-gray);
   border-radius: 8px;
@@ -322,222 +381,6 @@ body {
   position: absolute;
   bottom: 1px;
   right: 2px;
-}
-
-/* Moves Section */
-.moves-section {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  height: fit-content;
-  position: sticky;
-  top: 20px;
-}
-
-.moves-section h2 {
-  font-size: 1.2rem;
-  color: var(--dark-gray);
-  margin-bottom: 15px;
-  text-align: center;
-  font-weight: 600;
-}
-
-.moves-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  max-height: 70vh;
-  overflow-y: auto;
-  padding: 5px;
-}
-
-.move-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 12px 8px;
-  background: var(--light-gray);
-  border: 2px solid var(--border-color);
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: center;
-  color: var(--text-color);
-  min-height: 60px;
-}
-
-.move-piece {
-  font-size: 1.5rem;
-  line-height: 1;
-  color: var(--text-color);
-}
-
-.move-notation {
-  font-size: 0.9rem;
-  font-weight: 600;
-  font-family: 'Courier New', monospace;
-}
-
-.move-btn:hover:not(:disabled) {
-  background: var(--primary-blue);
-  color: white;
-  border-color: var(--primary-blue);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.move-btn:hover:not(:disabled) .move-piece {
-  color: white;
-}
-
-.move-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.no-moves {
-  text-align: center;
-  padding: 40px 20px;
-  color: var(--medium-gray);
-  font-style: italic;
-  font-size: 1.1rem;
-}
-
-/* Responsive Design */
-@media (max-width: 1200px) {
-  .game-layout {
-    grid-template-columns: 180px 1fr 280px;
-    gap: 15px;
-    padding: 15px;
-  }
-
-  .chess-board {
-    grid-template-columns: 25px repeat(8, 45px);
-    grid-template-rows: repeat(9, 45px);
-  }
-
-  .piece-symbol {
-    font-size: 1.8rem;
-  }
-}
-
-@media (max-width: 1000px) {
-  .game-layout {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
-    gap: 20px;
-    max-width: 600px;
-  }
-
-  .game-sidebar {
-    position: static;
-  }
-
-  .sidebar-header {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-
-  .moves-section {
-    position: static;
-  }
-
-  .moves-grid {
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    max-height: 300px;
-  }
-}
-
-@media (max-width: 768px) {
-  body {
-    font-size: 16px;
-  }
-
-  .start-screen h1 {
-    font-size: 2.5rem;
-  }
-
-  .start-screen p {
-    font-size: 1.3rem;
-  }
-
-  .difficulty-btn {
-    font-size: 1.3rem;
-    padding: 25px;
-    min-height: 80px;
-  }
-
-  .chess-board {
-    grid-template-columns: 20px repeat(8, 40px);
-    grid-template-rows: repeat(9, 40px);
-  }
-
-  .file-label, .rank-label {
-    font-size: 0.7rem;
-  }
-
-  .piece-symbol {
-    font-size: 1.5rem;
-  }
-
-  .square-label {
-    font-size: 0.5rem;
-  }
-
-  .sidebar-header h1 {
-    font-size: 1.3rem;
-  }
-
-  .moves-grid {
-    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-    gap: 6px;
-  }
-
-  .move-btn {
-    padding: 10px 6px;
-    min-height: 55px;
-  }
-
-  .move-piece {
-    font-size: 1.3rem;
-  }
-
-  .move-notation {
-    font-size: 0.8rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .chess-board {
-    grid-template-columns: 18px repeat(8, 35px);
-    grid-template-rows: repeat(9, 35px);
-  }
-
-  .piece-symbol {
-    font-size: 1.3rem;
-  }
-
-  .moves-grid {
-    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-  }
-
-  .move-btn {
-    min-height: 50px;
-    padding: 8px 4px;
-  }
-
-  .move-piece {
-    font-size: 1.1rem;
-  }
-
-  .move-notation {
-    font-size: 0.7rem;
-  }
 }
 
 /* High contrast mode */
