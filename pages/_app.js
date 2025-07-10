@@ -1,9 +1,19 @@
 import "../styles/globals.css";
 import Head from "next/head";
-import { StagewiseToolbar } from "@stagewise/toolbar-next";
-import { ReactPlugin } from "@stagewise-plugins/react";
+import { useEffect } from "react";
 
 export default function App({ Component, pageProps }) {
+  useEffect(() => {
+    // Initialize stagewise toolbar only in development and on client side
+    if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
+      import('@stagewise/toolbar').then(({ initToolbar }) => {
+        initToolbar({
+          plugins: []
+        });
+      }).catch(console.error);
+    }
+  }, []);
+
   return (
     <>
       <Head>
@@ -50,11 +60,6 @@ export default function App({ Component, pageProps }) {
         <meta name="format-detection" content="telephone=no" />
       </Head>
       <Component {...pageProps} />
-      <StagewiseToolbar 
-        config={{
-          plugins: [ReactPlugin]
-        }}
-      />
     </>
   );
 }
