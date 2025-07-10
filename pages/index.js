@@ -31,6 +31,28 @@ export default function Home() {
     setIsPlayerTurn(status.turn === "white" && !status.gameOver);
   };
 
+  // Get piece symbol for a move
+  const getMoveSymbol = (move) => {
+    // Handle castling
+    if (move === "O-O" || move === "O-O-O") {
+      return "♚"; // King symbol for castling
+    }
+    
+    // Extract piece from move notation
+    const firstChar = move[0];
+    if (firstChar === firstChar.toUpperCase() && isNaN(firstChar)) {
+      const pieceSymbols = {
+        'K': '♚', // King
+        'Q': '♛', // Queen  
+        'R': '♜', // Rook
+        'B': '♝', // Bishop
+        'N': '♞', // Knight
+      };
+      return pieceSymbols[firstChar] || '♟'; // Default to pawn
+    }
+    return '♟'; // Pawn moves don't have a piece letter prefix
+  };
+
   const handleMoveClick = async (move) => {
     if (!game || loading || !isPlayerTurn) return;
 
@@ -151,70 +173,72 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
-      <div className="game-container">
-        <header className="game-header">
-          <h1>♟️ Chess Game</h1>
-          <div className="game-info">
-            <span className="difficulty-badge">{difficulty}</span>
+      <div className="game-layout">
+        {/* Slim Sidebar */}
+        <aside className="game-sidebar">
+          <div className="sidebar-header">
+            <h1>♟️ Chess</h1>
+            <div className="game-status">
+              {gameState.status.gameOver ? (
+                <div className="game-over">
+                  {gameState.status.isCheckmate && "Game Over!"}
+                  {gameState.status.isStalemate && "Draw!"}
+                  {gameState.status.isDraw && !gameState.status.isStalemate && "Draw!"}
+                </div>
+              ) : (
+                <div className="game-active">
+                  {loading ? "🤔 Thinking..." : (gameState.status.inCheck ? "⚠️ Check!" : "♟️ Playing")}
+                </div>
+              )}
+            </div>
+            <div className="difficulty-info">
+              <span className="difficulty-badge">{difficulty}</span>
+            </div>
             <button onClick={handleNewGame} className="new-game-btn">
               New Game
             </button>
           </div>
-        </header>
+        </aside>
 
-        <main className="game-main">
-          {/* Game Status */}
-          <section className="status-section" aria-live="polite">
-            {gameState.status.gameOver ? (
-              <div className="game-over-status">
-                {gameState.status.isCheckmate && 
-                  `Game Over! ${gameState.status.turn === "white" ? "Black" : "White"} wins!`}
-                {gameState.status.isStalemate && "Game Over! Draw by stalemate."}
-                {gameState.status.isDraw && !gameState.status.isStalemate && "Game Over! Draw."}
-              </div>
-            ) : (
-              <div className="turn-status">
-                {isPlayerTurn ? "Your turn" : "Computer thinking..."}
-                {gameState.status.inCheck && " - Check!"}
-              </div>
-            )}
-          </section>
+        {/* Chess Board */}
+        <main className="board-main">
+          <ChessBoard
+            board={gameState.board}
+            gameStatus={gameState.status}
+          />
+        </main>
 
-          {/* Chess Board */}
-          <section className="board-section">
-            <ChessBoard
-              board={gameState.board}
-              gameStatus={gameState.status}
-            />
-          </section>
-
-          {/* Move Buttons */}
-          {isPlayerTurn && !gameState.status.gameOver && (
-            <section className="moves-section">
-              <h2>Choose your move:</h2>
-              <div className="moves-grid">
-                {gameState.legalMoves.map((move, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleMoveClick(move)}
-                    className="move-btn"
-                    disabled={loading}
-                    aria-label={`Make move ${move}`}
-                  >
-                    {move}
-                  </button>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {loading && (
-            <div className="loading-overlay" role="status" aria-live="polite">
-              <div className="loading-spinner"></div>
-              <p>Computer is thinking...</p>
+        {/* Move Buttons */}
+        <section className="moves-section">
+          <h2>Available Moves</h2>
+          {isPlayerTurn && !gameState.status.gameOver ? (
+            <div className="moves-grid">
+              {gameState.legalMoves.map((move, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleMoveClick(move)}
+                  className="move-btn"
+                  disabled={loading}
+                  aria-label={`Make move ${move}`}
+                >
+                  <span className="move-piece">{getMoveSymbol(move)}</span>
+                  <span className="move-notation">{move}</span>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="no-moves">
+              {gameState.status.gameOver ? "Game finished" : "Computer's turn"}
             </div>
           )}
-        </main>
+        </section>
+
+        {loading && (
+          <div className="loading-overlay" role="status" aria-live="polite">
+            <div className="loading-spinner"></div>
+            <p>Computer is thinking...</p>
+          </div>
+        )}
       </div>
     </>
   );

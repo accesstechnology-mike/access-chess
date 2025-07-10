@@ -21,6 +21,12 @@ export default function ChessBoard({ board, gameStatus }) {
     return `${baseClass} ${lightSquare}`;
   };
 
+  const getPieceClass = (square) => {
+    if (!square.piece) return "";
+    const colorClass = square.color === "w" ? "white-piece" : "black-piece";
+    return `piece-symbol ${colorClass}`;
+  };
+
   const getSquareAriaLabel = (square, rankIndex, fileIndex) => {
     const file = String.fromCharCode(97 + fileIndex);
     const rank = 8 - rankIndex;
@@ -85,7 +91,7 @@ export default function ChessBoard({ board, gameStatus }) {
                 >
                   {square.piece && (
                     <>
-                      <span className="piece-symbol" aria-hidden="true">
+                      <span className={getPieceClass(square)} aria-hidden="true">
                         {square.piece}
                       </span>
                       <span className="square-label" aria-hidden="true">
