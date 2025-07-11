@@ -95,7 +95,7 @@ export default function GamePage() {
       if (!status.gameOver) {
         setTimeout(async () => {
           await makeComputerMove();
-        }, 500);
+        }, 1500);
       } else {
         setLoading(false);
       }
