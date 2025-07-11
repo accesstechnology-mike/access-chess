@@ -71,16 +71,6 @@ export default function ChessBoard({ board, gameStatus, lastMove }) {
         role="table"
         aria-label="Chess board"
       >
-        {/* File labels (a-h) */}
-        <div className="file-labels">
-          <div className="corner-label" aria-hidden="true"></div>
-          {Array.from({ length: 8 }, (_, i) => (
-            <div key={i} className="file-label" aria-hidden="true">
-              {String.fromCharCode(97 + i)}
-            </div>
-          ))}
-        </div>
-
         {/* Board squares with rank labels */}
         {board.map((row, rankIndex) => {
           const rank = 8 - rankIndex;
@@ -112,6 +102,16 @@ export default function ChessBoard({ board, gameStatus, lastMove }) {
             </div>
           );
         })}
+
+        {/* File labels (a-h) */}
+        <div className="file-labels">
+          <div className="corner-label" aria-hidden="true"></div>
+          {Array.from({ length: 8 }, (_, i) => (
+            <div key={i} className="file-label" aria-hidden="true">
+              {String.fromCharCode(97 + i)}
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Game status for screen readers */}
